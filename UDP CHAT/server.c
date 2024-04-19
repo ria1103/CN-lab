@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <unistd.h> 
+#include <unistd.h>
 
 #define PORT 2000
 #define MAX_BUFFER_SIZE 1024
@@ -34,6 +34,7 @@ int main() {
     }
 
     while (1) {
+        memset(buffer, 0, MAX_BUFFER_SIZE); // Clear buffer
         // Receive message from client
         if (recvfrom(serverSocket, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&clientAddr, &addrLen) == -1) {
             perror("Receive failed");
@@ -41,10 +42,10 @@ int main() {
         }
         printf("Message from client: %s\n", buffer);
 
-        // Send response to client
         printf("Enter message to client: ");
         fgets(buffer, MAX_BUFFER_SIZE, stdin);
-        if (sendto(serverSocket, buffer, strlen(buffer), 0, (struct sockaddr *)&clientAddr, addrLen) == -1) {
+
+        if (sendto(serverSocket, buffer, strlen(buffer) - 1, 0, (struct sockaddr *)&clientAddr, addrLen) == -1) {
             perror("Send failed");
             exit(EXIT_FAILURE);
         }
